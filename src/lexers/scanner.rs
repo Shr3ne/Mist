@@ -57,6 +57,42 @@ impl Lexer {
         self.tokens.push(Token::new(token_type, text, self.line));
     }
 
+    fn identifier(&mut self) {
+        while self.peek().is_ascii_alphanumeric() || self.peek() == '_' {
+            self.step();
+        }
+
+        let txt: String = self.source[self.start .. self.current].iter().collect();
+
+        let token = match txt.as_str() {
+            "and"    => TokenKind::And,
+            "class"  => TokenKind::Class,
+            "else"   => TokenKind::Else,
+            "false"  => TokenKind::False,
+            "for"    => TokenKind::For,
+            "fun"    => TokenKind::Fun,
+            "if"     => TokenKind::If,
+            "nil"    => TokenKind::Nil,
+            "or"     => TokenKind::Or,
+            "print"  => TokenKind::Print,
+            "not"    => TokenKind::Not,
+            "var"    => TokenKind::Var,
+            "return" => TokenKind::Return,
+            "true"   => TokenKind::True,
+            "const"    => TokenKind::Const,
+            "while"  => TokenKind::While,
+
+            _ => TokenKind::Identifier(txt),
+        };
+
+
+        self.tokenize(token);
+    }
+
+    fn is_alphabet(&self, current_char : char) -> bool {
+        current_char.is_ascii_alphabetic() || current_char == '_'
+    }
+
     fn number(&mut self) {
         while self.peek().is_ascii_digit() {
             self.step();
@@ -99,8 +135,23 @@ impl Lexer {
             '*' => self.tokenize(TokenKind::Star),
             '/' => self.tokenize(TokenKind::Slash),
             '%' => self.tokenize(TokenKind::Percent),
+            '!' => {let token = if self.peek() == '=' {self.step(); TokenKind::BangEqual} else {TokenKind::Bang};
+                    self.tokenize(token);
+            },
+            '=' => {let token = if self.peek() == '=' {self.step(); TokenKind::EqualEqual} else {TokenKind::Equal};
+                    self.tokenize(token);
+            },
+            '>' => {let token = if self.peek() == '=' {self.step(); TokenKind::GreaterEqual} else {TokenKind::Greater};
+                    self.tokenize(token);
+            },
+            '<' => {let token = if self.peek() == '=' {self.step(); TokenKind::LessEqual} else {TokenKind::Less};
+                    self.tokenize(token);
+            },
+
             '0'..='9' => self.number(),
             '\n' => self.line += 1,
+
+            next_char if self.is_alphabet(next_char) => self.identifier(),
 
             _ => {}
 

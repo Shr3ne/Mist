@@ -11,7 +11,6 @@ pub enum TokenKind {
     Equal, EqualEqual,
     Greater, GreaterEqual,
     Less, LessEqual,
-    Arrow,
 
     // Literals
     Identifier(String),
@@ -21,13 +20,12 @@ pub enum TokenKind {
     // Keywords 
     And, Or, Not,
     If, Else,
-    While, For, In,
-    Fn, Return,
-    Let, Const,
+    While, For,
+    Fun, Return,
+    Const, Var,
     True, False, Nil,
     Print,
-    Class, Self_,
-    Import,
+    Class,
 
     // Special
     Eof,
