@@ -1,10 +1,11 @@
 use crate::lexers::tokens::{Token, TokenKind};
 
+#[derive(Debug, Clone)]
 pub enum Exp {
     Binary { 
-        L: Box<Exp>,
-        Op: Token,
-        R: Box<Exp>
+        left: Box<Exp>,
+        operator: Token,
+        right: Box<Exp>
     },
 
     Grouping {
@@ -12,11 +13,11 @@ pub enum Exp {
     },
 
     Literal {
-        Value: TokenKind,
+        value: TokenKind,
     },
 
     Unary {
-        Op: Token,
-        R: Box<Exp>
+        opterator: Token,
+        right: Box<Exp>
     }
 }

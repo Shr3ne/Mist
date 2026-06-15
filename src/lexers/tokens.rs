@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum TokenKind {
      // Single-character tokens
     LeftParen, RightParen,
@@ -32,7 +32,7 @@ pub enum TokenKind {
     Error,   
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Token {
     pub token_type:  TokenKind,
     pub lexeme: String,

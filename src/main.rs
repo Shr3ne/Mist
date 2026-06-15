@@ -1,18 +1,21 @@
 mod lexers;
+mod grammar;
 
 use lexers::scanner::Lexer;
 use lexers::tokens;
 
+use grammar::parser::Parser;
+
 fn main() {
-    let source_code = "123.67 + 45 and 29 < 23 <= 21;";
-    println!("Scanning source:");
+    let source_code = "10 <= 20";
 
     let mut lexer = Lexer::new(source_code);
     lexer.scan_source();
 
-    println!("Tokens Generated");
-    
-    for token in &lexer.tokens {
-        println!("{:?}", token);
+    let mut parser = Parser::new(lexer.tokens);
+
+    match parser.parse_expression() {
+        Ok(ast) => println!("AST:\n{:#?}", ast),
+        Err(e) => println!("Parser failed: {}", e),
     }
 }
