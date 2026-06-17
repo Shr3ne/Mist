@@ -65,12 +65,8 @@ impl Parser {
     }
 
     fn comparison(&mut self) -> Result<Exp, String>  {
-        let mut expr = match self.primary() {
-                Ok(ast_node) => ast_node,
-                Err(e) => return Err(e),
-        };
+        let mut expr = self.term()?;
 
-        // 2. Loop as long as we see comparison operators
         while self.match_tokens(&[
             TokenKind::Greater,
             TokenKind::GreaterEqual,
@@ -79,7 +75,7 @@ impl Parser {
         ]) {
             let operator = self.get_previous().clone();
             
-            let mut right = match self.primary() {
+            let right = match self.term() {
                 Ok(ast_node) => ast_node,
                 Err(e) => return Err(e),
             };
@@ -107,6 +103,23 @@ impl Parser {
                 operator,
                 right: Box::new(right),
             };
+        }
+
+        Ok(expr)
+    }
+
+    fn term(&mut self) -> Result<Exp, String> {
+        let mut expr = self.primary()?;
+
+        while self.match_tokens(&[TokenKind::Minus, TokenKind::Plus]) {
+            let operator = self.get_previous().clone();
+
+            let right = self.primary()?;
+
+            expr = Exp::Binary {
+                 left: Box::new(expr), 
+                 operator, 
+                 right: Box::new(right) };
         }
 
         Ok(expr)
