@@ -109,9 +109,26 @@ impl Parser {
     }
 
     fn term(&mut self) -> Result<Exp, String> {
-        let mut expr = self.primary()?;
+        let mut expr = self.factor()?;
 
         while self.match_tokens(&[TokenKind::Minus, TokenKind::Plus]) {
+            let operator = self.get_previous().clone();
+
+            let right = self.factor()?;
+
+            expr = Exp::Binary {
+                 left: Box::new(expr), 
+                 operator, 
+                 right: Box::new(right) };
+        }
+
+        Ok(expr)
+    }
+
+    fn factor(&mut self) -> Result<Exp, String> {
+        let mut expr= self.primary()?;
+
+        while self.match_tokens(&[TokenKind::Star, TokenKind::Slash]) {
             let operator = self.get_previous().clone();
 
             let right = self.primary()?;
