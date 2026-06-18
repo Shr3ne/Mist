@@ -23,13 +23,13 @@ pub enum TokenKind {
     While, For,
     Fun, Return,
     Const, Var,
-    True, False, Nil,
+    True, False, Null,
     Print,
     Class,
 
     // Special
     Eof,
-    Error,   
+    Error(String),   
 }
 
 #[derive(Debug, Clone)]

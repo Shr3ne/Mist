@@ -7,7 +7,7 @@ use lexers::tokens;
 use grammar::parser::Parser;
 
 fn main() {
-    let source_code = "-10 * 20 < 50 / 15;";
+    let source_code = "-20 < 50 / 15;";
 
     let mut lexer = Lexer::new(source_code);
     lexer.scan_source();

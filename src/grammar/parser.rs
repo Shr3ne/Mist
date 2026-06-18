@@ -14,6 +14,14 @@ impl Parser {
         }
     }
 
+    fn error(&self, token: &Token, message: &str) -> String {
+        if token.token_type == TokenKind::Eof {
+            format!("[Line {}] Error at end: {}", token.line, message)
+        } else {
+            format!("[Line {}] Error at '{}': {}", token.line, token.lexeme, message)
+        }
+    }
+
     fn get_current(&self) -> &Token {
         &self.tokens[self.current]
     }
@@ -53,14 +61,28 @@ impl Parser {
     }
 
     fn primary(&mut self) -> Result<Exp, String> {
-        let token = self.step();
+        let token = self.step().clone();
 
         match &token.token_type {   
             TokenKind::Number(value) => {
                 Ok(Exp::Literal { value: TokenKind::Number(*value) })
             },
+
+            TokenKind::True => {
+                Ok(Exp::Literal { value: TokenKind::True })
+            },
+            TokenKind::False => {
+                Ok(Exp::Literal { value: TokenKind::False })
+            },
+            TokenKind::Null => {
+                Ok(Exp::Literal { value: TokenKind::Null })
+            },
+
+            TokenKind::Error(message) => {
+                Err(self.error(&token, message))
+            },
             
-            _ => Err("Error: I was expecting a number here!".to_string())
+            _ => Err(self.error(&token, "Expect expression!!"))
         }
     }
 

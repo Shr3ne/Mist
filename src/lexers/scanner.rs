@@ -72,7 +72,7 @@ impl Lexer {
             "for"    => TokenKind::For,
             "fun"    => TokenKind::Fun,
             "if"     => TokenKind::If,
-            "nil"    => TokenKind::Nil,
+            "null"    => TokenKind::Null,
             "or"     => TokenKind::Or,
             "print"  => TokenKind::Print,
             "not"    => TokenKind::Not,
