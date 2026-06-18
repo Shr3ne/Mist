@@ -17,7 +17,7 @@ pub enum Exp {
     },
 
     Unary {
-        opterator: Token,
+        operator: Token,
         right: Box<Exp>
     }
 }
