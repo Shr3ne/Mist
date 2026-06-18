@@ -126,12 +126,12 @@ impl Parser {
     }
 
     fn factor(&mut self) -> Result<Exp, String> {
-        let mut expr= self.primary()?;
+        let mut expr= self.unary()?;
 
         while self.match_tokens(&[TokenKind::Star, TokenKind::Slash]) {
             let operator = self.get_previous().clone();
 
-            let right = self.primary()?;
+            let right = self.unary()?;
 
             expr = Exp::Binary {
                  left: Box::new(expr), 
@@ -140,6 +140,21 @@ impl Parser {
         }
 
         Ok(expr)
+    }
+
+    fn unary(&mut self) -> Result<Exp, String> {
+        if self.match_tokens(&[TokenKind::Bang, TokenKind::Minus]) {
+            let operator = self.get_previous().clone();
+
+            let right = self.unary()?;
+
+            return Ok(Exp::Unary { 
+                operator, 
+                right: Box::new(right) 
+            });
+        }
+
+        self.primary()
     }
 
     pub fn parse_expression(&mut self) -> Result<Exp, String> {
