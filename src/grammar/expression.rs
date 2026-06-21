@@ -7,11 +7,7 @@ pub enum Exp {
         operator: Token,
         right: Box<Exp>
     },
-
-    Grouping {
-        expression: Box<Exp> 
-    },
-
+    
     Literal {
         value: TokenKind,
     },

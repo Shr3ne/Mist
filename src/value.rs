@@ -5,7 +5,7 @@ pub enum MistValue {
     Number(f64),
     Boolean(bool),
     String(String),
-    Nil
+    Null
 }
 
 impl fmt::Display for MistValue {
@@ -14,7 +14,7 @@ impl fmt::Display for MistValue {
             MistValue::Number(n) => write!(f, "{}", n),
             MistValue::Boolean(b) => write!(f, "{}", b),
             MistValue::String(s) => write!(f, "{}", s),
-            MistValue::Nil => write!(f, "nil"),
+            MistValue::Null => write!(f, "Null"),
         }
     }
 }
