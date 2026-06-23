@@ -1,10 +1,33 @@
-use crate::ast::ast::Exp;
+use crate::ast::ast::{Exp, Smt};
 use crate::lexers::tokens::TokenKind;
 use crate::value::MistValue;
 
 pub struct Interpreter;
 
 impl Interpreter {
+    pub fn interpret(statements: &[Smt]) -> Result<Vec<MistValue>, String> {
+        let mut results = Vec::new();
+        for smt in statements {
+            results.push(Self::execute(smt)?);
+        }
+
+        Ok(results)
+    }
+
+    pub fn execute(smt: &Smt) -> Result<MistValue, String> {
+        match smt {
+            Smt::Print(expr) => {
+                let value = Self::evaluate(expr)?;
+                println!("{}", value);
+                Ok(MistValue::Null)
+            },
+            Smt::Expression(expr) => {
+                let value = Self::evaluate(expr)?;
+                Ok(value)
+            }
+        }
+    }
+
     pub fn evaluate(expr: &Exp) -> Result<MistValue, String> {
         match expr {
             Exp::Literal { value } => match value {

@@ -10,7 +10,7 @@ use interpreter::Interpreter;
 
 fn main() {
     // A classic order-of-operations test!
-    let source_code = "5 + 10 == 25"; 
+    let source_code = "print 10 + 10; print 5 * 2; 10 + 10 == 20;"; 
     println!("Executing Mist Code: '{}'\n", source_code);
 
     let mut lexer = Lexer::new(source_code);
@@ -18,13 +18,14 @@ fn main() {
 
     let mut parser = Parser::new(lexer.tokens);
 
-    match parser.parse_expression() {
-        Ok(ast) => {
-            match Interpreter::evaluate(&ast) {
-                Ok(result) => println!("Final Answer: {}", result),
+    match parser.parse() {
+        Ok(statements) => {
+           match Interpreter::interpret(&statements) {
+                Ok(results) => println!("{:?}", results),
                 Err(e) => println!("Runtime Error: {}", e),
             }
         },
+        
         Err(e) => println!("Parse Error: {}", e),
     }
 }

@@ -1,5 +1,5 @@
 use crate::lexers::tokens::{Token, TokenKind};
-use crate::ast::ast::Exp;
+use crate::ast::ast::{Exp, Smt};
 
 pub struct Parser {
     tokens : Vec<Token>,
@@ -59,6 +59,48 @@ impl Parser {
 
         false
     }
+
+    // STATEMENT LIST
+    pub fn parse(&mut self) -> Result<Vec<Smt>, String> {
+        let mut smt_list = Vec::new();
+        while !self.is_at_end() {
+            smt_list.push(self.statement()?);
+        }
+        Ok(smt_list)
+    }
+
+    pub fn statement(&mut self) -> Result<Smt, String> {
+        if self.match_tokens(&[TokenKind::Print]) {
+            self.print_smt()
+        } else {
+            self.expression_smt()
+        }
+    }
+
+    pub fn print_smt(&mut self) -> Result<Smt, String> {
+       let value = self.parse_expression()?;
+
+        if self.match_tokens(&[TokenKind::Semicolon]) {
+            Ok(Smt::Print(value))
+        } else {
+            Err("Parse Error: Expected ';' after ".to_string())
+        }
+    }
+
+    pub fn expression_smt(&mut self) -> Result<Smt, String> {
+        let expr = self.parse_expression()?;
+        
+        if self.match_tokens(&[TokenKind::Semicolon]) {
+            Ok(Smt::Expression(expr))
+        } else {
+            Err("Parse Error: Expected ';' after ".to_string())
+        }
+    }
+
+
+
+
+    // EXPRESSION LIST
 
     fn primary(&mut self) -> Result<Exp, String> {
         let token = self.step().clone();
