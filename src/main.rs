@@ -1,10 +1,11 @@
 pub mod lexers;
-pub mod grammar;
+pub mod parser;
+pub mod ast;
 pub mod value;
 pub mod interpreter;
 
 use lexers::scanner::Lexer;
-use grammar::parser::Parser;
+use parser::Parser;
 use interpreter::Interpreter;
 
 fn main() {

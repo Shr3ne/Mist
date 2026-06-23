@@ -1,5 +1,5 @@
 use crate::lexers::tokens::{Token, TokenKind};
-use crate::grammar::expression::Exp;
+use crate::ast::ast::Exp;
 
 pub struct Parser {
     tokens : Vec<Token>,

@@ -17,3 +17,10 @@ pub enum Exp {
         right: Box<Exp>
     }
 }
+
+#[derive(Debug, Clone)]
+pub enum Smt {
+
+    Print(Exp),
+    Expression(Exp),
+}
