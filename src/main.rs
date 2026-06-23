@@ -7,10 +7,11 @@ pub mod interpreter;
 use lexers::scanner::Lexer;
 use parser::Parser;
 use interpreter::Interpreter;
+use value::MistValue;
 
 fn main() {
     // A classic order-of-operations test!
-    let source_code = "print 10 + 10; print 5 * 2; 10 + 10 == 20;"; 
+    let source_code = "print 10 + 10;"; 
     println!("Executing Mist Code: '{}'\n", source_code);
 
     let mut lexer = Lexer::new(source_code);
@@ -21,7 +22,15 @@ fn main() {
     match parser.parse() {
         Ok(statements) => {
            match Interpreter::interpret(&statements) {
-                Ok(results) => println!("{:?}", results),
+                Ok(results) => {
+                    for result in results {
+                        match result {
+                            MistValue::Null => {}, 
+                            other => println!("{}", other),
+                        }
+                    }
+                },
+
                 Err(e) => println!("Runtime Error: {}", e),
             }
         },
