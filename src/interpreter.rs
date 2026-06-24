@@ -1,34 +1,53 @@
 use crate::ast::ast::{Exp, Smt};
 use crate::lexers::tokens::TokenKind;
 use crate::value::MistValue;
+use crate::variable::Vars;
 
-pub struct Interpreter;
+pub struct Interpreter {
+    pub env: Vars,
+}
 
 impl Interpreter {
-    pub fn interpret(statements: &[Smt]) -> Result<Vec<MistValue>, String> {
+     pub fn new() -> Self {
+        Self {
+            env: Vars::new(),
+        }
+    }
+
+    pub fn interpret(&mut self, statements: &[Smt]) -> Result<Vec<MistValue>, String> {
         let mut results = Vec::new();
         for smt in statements {
-            results.push(Self::execute(smt)?);
+            results.push(self.execute(smt)?);
         }
 
         Ok(results)
     }
 
-    pub fn execute(smt: &Smt) -> Result<MistValue, String> {
+    pub fn execute(&mut self, smt: &Smt) -> Result<MistValue, String> {
         match smt {
             Smt::Print(expr) => {
-                let value = Self::evaluate(expr)?;
+                let value = self.evaluate(expr)?;
                 println!("{}", value);
+
                 Ok(MistValue::Null)
             },
             Smt::Expression(expr) => {
-                let value = Self::evaluate(expr)?;
+                let value = self.evaluate(expr)?;
+
                 Ok(value)
+            },
+
+            Smt::Var { name, init } => {
+                let value = self.evaluate(init)?;
+
+                self.env.set(name.lexeme.clone(), value);
+
+                Ok(MistValue::Null)
             }
         }
     }
 
-    pub fn evaluate(expr: &Exp) -> Result<MistValue, String> {
+    pub fn evaluate(&mut self, expr: &Exp) -> Result<MistValue, String> {
         match expr {
             Exp::Literal { value } => match value {
                 TokenKind::Number(n) => Ok(MistValue::Number(*n)),
@@ -40,7 +59,7 @@ impl Interpreter {
             },
 
             Exp::Unary { operator, right } => {
-                let right_value = Self::evaluate(right)?;
+                let right_value = self.evaluate(right)?;
 
                 match operator.token_type {
                     TokenKind::Minus => {
@@ -59,8 +78,8 @@ impl Interpreter {
             },
 
             Exp::Binary { left, operator, right } => {
-                let left_val = Self::evaluate(left)?;
-                let right_val = Self::evaluate(right)?;
+                let left_val = self.evaluate(left)?;
+                let right_val = self.evaluate(right)?;
 
                 match operator.token_type {
                     // --- ARITHMETIC ---
@@ -132,6 +151,17 @@ impl Interpreter {
 
                     _ => Err(format!("[Line {}] Runtime Error: Unknown binary operator.", operator.line)),
                 }
+            },
+
+            Exp::Variable { name } => {
+                self.env.get(&name.lexeme)
+            },
+
+            Exp::Assign { name, value } => {
+                let eval_value = self.evaluate(value)?;
+
+                self.env.assign(name.lexeme.clone(), eval_value.clone())?;
+                Ok(eval_value) 
             }
         }
     }

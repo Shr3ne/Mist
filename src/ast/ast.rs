@@ -15,7 +15,16 @@ pub enum Exp {
     Unary {
         operator: Token,
         right: Box<Exp>
-    }
+    },
+
+    Variable {
+        name: Token
+    },
+
+    Assign {
+        name: Token,
+        value: Box<Exp>,
+    },
 }
 
 #[derive(Debug, Clone)]
@@ -23,4 +32,8 @@ pub enum Smt {
 
     Print(Exp),
     Expression(Exp),
+    Var {
+        name: Token,
+        init: Exp,
+    },
 }

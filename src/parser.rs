@@ -64,9 +64,38 @@ impl Parser {
     pub fn parse(&mut self) -> Result<Vec<Smt>, String> {
         let mut smt_list = Vec::new();
         while !self.is_at_end() {
-            smt_list.push(self.statement()?);
+            smt_list.push(self.declaration()?);
         }
         Ok(smt_list)
+    }
+
+    fn declaration(&mut self) -> Result<Smt, String> {
+        if self.match_tokens(&[TokenKind::Var]) {
+            self.var_declaration()
+        } else {
+            self.statement()
+        }
+    }
+
+    fn var_declaration(&mut self) -> Result<Smt, String> {
+        let name = self.step().clone();
+        
+        match name.token_type {
+            TokenKind::Identifier(_) => {},
+            _ => return Err(self.error(&name, "Expect variable name.")),
+        }
+
+        let init = if self.match_tokens(&[TokenKind::Equal]) {
+            self.parse_expression()?
+        } else {
+            Exp::Literal { value: TokenKind::Null }
+        };
+
+        if self.match_tokens(&[TokenKind::Semicolon]) {
+            Ok(Smt::Var { name, init })
+        } else {
+            Err("Parse Error: Expect ';' after variable declaration.".to_string())
+        }
     }
 
     pub fn statement(&mut self) -> Result<Smt, String> {
@@ -97,10 +126,23 @@ impl Parser {
         }
     }
 
-
-
-
     // EXPRESSION LIST
+    fn assignment(&mut self) -> Result<Exp, String> {
+        let expr = self.equality()?;
+
+        if self.match_tokens(&[TokenKind::Equal]) {
+            let equals = self.get_previous().clone();
+            let value = self.assignment()?;
+
+            if let Exp::Variable { name } = expr {
+                return Ok(Exp::Assign { name, value: Box::new(value) });
+            }
+
+            return Err(self.error(&equals, "Invalid assignment target."));
+        }
+
+        Ok(expr)
+    }
 
     fn primary(&mut self) -> Result<Exp, String> {
         let token = self.step().clone();
@@ -118,6 +160,10 @@ impl Parser {
             },
             TokenKind::Null => {
                 Ok(Exp::Literal { value: TokenKind::Null })
+            },
+
+            TokenKind::Identifier(_) => {
+                Ok(Exp::Variable { name: token.clone() })
             },
 
             TokenKind::Error(message) => {
@@ -153,7 +199,7 @@ impl Parser {
 
         Ok(expr)
     }
-    // Check for == or !=
+
     fn equality(&mut self) -> Result<Exp, String> {
         let mut expr = self.comparison()?; 
 
@@ -222,6 +268,6 @@ impl Parser {
     }
 
     pub fn parse_expression(&mut self) -> Result<Exp, String> {
-        self.equality()
+        self.assignment()
     }
  }
