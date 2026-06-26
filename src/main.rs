@@ -10,7 +10,7 @@ use parser::Parser;
 use interpreter::Interpreter;
 
 fn main() {
-    let source_code = "var x; x = 19; x = x+10; print x;"; 
+    let source_code = "var x; x = 'a';print x;"; 
     println!("Executing Mist Code: '{}'\n", source_code);
 
     let mut lexer = Lexer::new(source_code);
