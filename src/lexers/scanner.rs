@@ -81,6 +81,7 @@ impl Lexer {
             "true"   => TokenKind::True,
             "const"    => TokenKind::Const,
             "while"  => TokenKind::While,
+            "repeat" => TokenKind::Repeat,
 
             _ => TokenKind::Identifier(txt),
         };

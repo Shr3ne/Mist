@@ -24,7 +24,7 @@ pub enum TokenKind {
     Fun, Return,
     Const, Var,
     True, False, Null,
-    Print,
+    Print, Repeat,
     Class,
 
     // Special
