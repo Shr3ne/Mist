@@ -37,6 +37,20 @@ impl Interpreter {
                 Ok(value)
             },
 
+            Smt::If { condition, then_branch, else_branch } => {
+                let cond_value = self.evaluate(condition)?;
+            
+                let truth = !matches!(cond_value, MistValue::Null | MistValue::Boolean(false));
+
+                if truth {
+                    self.execute(then_branch)?;
+                } else if let Some(else_stmt) = else_branch {
+                    self.execute(else_stmt)?;
+                }
+
+                Ok(MistValue::Null)
+            },
+
             Smt::Var { name, init } => {
                 let value = self.evaluate(init)?;
 

@@ -36,4 +36,10 @@ pub enum Smt {
         name: Token,
         init: Exp,
     },
+
+    If {
+        condition: Exp,
+        then_branch: Box<Smt>,
+        else_branch: Option<Box<Smt>>,
+    },
 }

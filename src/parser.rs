@@ -99,7 +99,9 @@ impl Parser {
     }
 
     pub fn statement(&mut self) -> Result<Smt, String> {
-        if self.match_tokens(&[TokenKind::Print]) {
+        if self.match_tokens(&[TokenKind::If]) {
+            self.if_smt()
+        } else if self.match_tokens(&[TokenKind::Print]) {
             self.print_smt()
         } else {
             self.expression_smt()
@@ -114,6 +116,28 @@ impl Parser {
         } else {
             Err("Parse Error: Expected ';' after ".to_string())
         }
+    }
+
+    pub fn if_smt(&mut self) -> Result<Smt, String> {
+        if !self.match_tokens(&[TokenKind::LeftParen]) {
+            return Err("Parse Error: Expect '(' after 'if'.".to_string());
+        }
+        
+        let condition = self.parse_expression()?;
+        
+        if !self.match_tokens(&[TokenKind::RightParen]) {
+            return Err("Parse Error: Expect ')' after if condition.".to_string());
+        }
+
+        let then_branch = Box::new(self.statement()?);
+        
+        let else_branch = if self.match_tokens(&[TokenKind::Else]) {
+            Some(Box::new(self.statement()?))
+        } else {
+            None
+        };
+
+        Ok(Smt::If { condition, then_branch, else_branch })
     }
 
     pub fn expression_smt(&mut self) -> Result<Smt, String> {
