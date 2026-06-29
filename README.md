@@ -6,8 +6,8 @@ Implementation from [*Crafting Interpreters*](https://craftinginterpreters.com)
 
 ## Todo (In Progress)
 - [x] Lexer / Scanner
-- [ ] Parser (Abstract Syntax Trees)
-- [ ] Tree-Walking Evaluator
+- [x] Parser (Abstract Syntax Trees)
+- [x] Tree-Walking Evaluator
 - [ ] Bytecode Virtual Machine
 
 ## Running the Project
