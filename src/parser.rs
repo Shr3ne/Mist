@@ -186,6 +186,10 @@ impl Parser {
                 Ok(Exp::Literal { value: TokenKind::Null })
             },
 
+            TokenKind::String(s) => {
+                Ok(Exp::Literal { value: TokenKind::String(s.clone()) })
+            },
+
             TokenKind::Identifier(_) => {
                 Ok(Exp::Variable { name: token.clone() })
             },
