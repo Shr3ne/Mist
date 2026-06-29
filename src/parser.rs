@@ -103,9 +103,25 @@ impl Parser {
             self.if_smt()
         } else if self.match_tokens(&[TokenKind::Print]) {
             self.print_smt()
+        } else if self.match_tokens(&[TokenKind::LeftBrace]) {
+            Ok(Smt::Block(self.scope()?))
         } else {
             self.expression_smt()
         }
+    }
+
+    pub fn scope(&mut self) -> Result<Vec<Smt>, String> {
+       let mut statements = Vec::new();
+
+        while !self.check_token(&TokenKind::RightBrace) && !self.is_at_end() {
+            statements.push(self.declaration()?);
+        }
+
+        if !self.match_tokens(&[TokenKind::RightBrace]) {
+            return Err("Parse Error: Expect '}' after block.".to_string());
+        }
+
+        Ok(statements)
     }
 
     pub fn print_smt(&mut self) -> Result<Smt, String> {

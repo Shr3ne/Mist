@@ -146,8 +146,8 @@ impl Lexer {
         match next_char {
             '(' => self.tokenize(TokenKind::LeftParen),
             ')' => self.tokenize(TokenKind::RightParen),
-            '{' => self.tokenize(TokenKind::RightBrace),
-            '}' => self.tokenize(TokenKind::LeftBrace),
+            '}' => self.tokenize(TokenKind::RightBrace),
+            '{' => self.tokenize(TokenKind::LeftBrace),
             ',' => self.tokenize(TokenKind::Comma),
             '.' => self.tokenize(TokenKind::Dot),
             ':' => self.tokenize(TokenKind::Colon),

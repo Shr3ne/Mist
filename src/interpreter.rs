@@ -57,6 +57,22 @@ impl Interpreter {
                 self.env.set(name.lexeme.clone(), value);
 
                 Ok(MistValue::Null)
+            },
+
+            Smt::Block(statements)=> {
+                let previous_env = self.env.clone();
+    
+                self.env = Vars::new_local(previous_env);
+
+                for statement in statements {
+                 self.execute(statement)?;
+                }
+
+                if let Some(parent) = self.env.enclosure.take() {
+                     self.env = *parent;
+                }
+    
+                Ok(MistValue::Null)
             }
         }
     }

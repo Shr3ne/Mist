@@ -32,6 +32,7 @@ pub enum Smt {
 
     Print(Exp),
     Expression(Exp),
+    Block(Vec<Smt>),
     Var {
         name: Token,
         init: Exp,
