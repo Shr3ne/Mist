@@ -118,6 +118,27 @@ impl Lexer {
         self.tokenize(TokenKind::Number(value));
     }
     
+    fn string(&mut self) {
+        while self.peek() != '"' && !self.is_at_end() {
+        if self.peek() == '\n' {
+            self.line += 1;
+        }
+
+            self.step();
+        }
+
+        if self.is_at_end() {
+            self.tokenize(TokenKind::Error("Unterminated string.".to_string()));
+            return;
+        }
+
+        self.step();
+
+        // Extract text *without* the quotes 
+        let value: String = self.source[self.start + 1 .. self.current - 1].iter().collect();
+    
+        self.tokenize(TokenKind::String(value));
+    }
 
     fn scan_token(&mut self) {
         let next_char = self.step();
@@ -147,6 +168,10 @@ impl Lexer {
             },
             '<' => {let token = if self.peek() == '=' {self.step(); TokenKind::LessEqual} else {TokenKind::Less};
                     self.tokenize(token);
+            },
+
+            '"' => {
+                    self.string();
             },
 
             '0'..='9' => self.number(),
