@@ -20,7 +20,7 @@ pub enum TokenKind {
     // Keywords 
     And, Or, Not,
     If, Else,
-    While, For,
+    Loop, For,
     Fun, Return,
     Const, Var,
     True, False, Null,

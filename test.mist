@@ -1,5 +1,8 @@
-var version = 1;
-if (version < 2) {
-    var language = "Mist";    
-    print language;
+var counter = 1;
+
+loop (counter <= 3) {
+    var message = "loop step: ";
+    print message;
+    print counter;
+    counter = counter + 1;
 }

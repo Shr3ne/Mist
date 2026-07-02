@@ -51,6 +51,21 @@ impl Interpreter {
                 Ok(MistValue::Null)
             },
 
+            Smt::Loop { condition, body } => {
+                loop {
+                    let cond_val = self.evaluate(condition)?;
+                    
+                    // If the condition evaluates to false or null, break the loop
+                    if matches!(cond_val, MistValue::Null | MistValue::Boolean(false)) {
+                        break;
+                    }
+                    
+                    self.execute(body)?;
+                }
+                
+                Ok(MistValue::Null)
+            }
+
             Smt::Var { name, init } => {
                 let value = self.evaluate(init)?;
 

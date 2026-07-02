@@ -101,6 +101,8 @@ impl Parser {
     pub fn statement(&mut self) -> Result<Smt, String> {
         if self.match_tokens(&[TokenKind::If]) {
             self.if_smt()
+        } else if self.match_tokens(&[TokenKind::Loop]) {
+             self.loop_smt()
         } else if self.match_tokens(&[TokenKind::Print]) {
             self.print_smt()
         } else if self.match_tokens(&[TokenKind::LeftBrace]) {
@@ -164,6 +166,22 @@ impl Parser {
         } else {
             Err("Parse Error: Expected ';' after ".to_string())
         }
+    }
+
+    fn loop_smt(&mut self) -> Result<Smt, String> {
+        if !self.match_tokens(&[TokenKind::LeftParen]) {
+        return Err("Parse Error: Expect '(' after 'while'.".to_string());
+    }
+    
+        let condition = self.parse_expression()?;
+    
+        if !self.match_tokens(&[TokenKind::RightParen]) {
+            return Err("Parse Error: Expect ')' after condition.".to_string());
+        }
+
+        let body = Box::new(self.statement()?);
+
+        Ok(Smt::Loop { condition, body })
     }
 
     // EXPRESSION LIST

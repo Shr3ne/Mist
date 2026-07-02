@@ -80,7 +80,7 @@ impl Lexer {
             "return" => TokenKind::Return,
             "true"   => TokenKind::True,
             "const"    => TokenKind::Const,
-            "while"  => TokenKind::While,
+            "loop"  => TokenKind::Loop,
             "repeat" => TokenKind::Repeat,
 
             _ => TokenKind::Identifier(txt),

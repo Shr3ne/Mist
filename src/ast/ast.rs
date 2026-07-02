@@ -43,4 +43,6 @@ pub enum Smt {
         then_branch: Box<Smt>,
         else_branch: Option<Box<Smt>>,
     },
+
+    Loop { condition: Exp, body: Box<Smt> },
 }
