@@ -1,3 +1,2 @@
 var counter = 1;
-print counter;
-// stupid comment
+print counter + " lol" ;

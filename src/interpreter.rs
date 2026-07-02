@@ -129,12 +129,24 @@ impl Interpreter {
                 match operator.token_type {
                     // --- ARITHMETIC ---
                     TokenKind::Plus => {
-                        if let (MistValue::Number(l), MistValue::Number(r)) = (&left_val, &right_val) {
-                            Ok(MistValue::Number(l + r))
-                        } else {
-                            Err(format!("[Line {}] Runtime Error: Operands must be numbers.", operator.line))
+                        match (&left_val, &right_val) {
+
+                                (MistValue::Number(l), MistValue::Number(r)) => {
+                                    Ok(MistValue::Number(l + r))
+                                },
+    
+                                (MistValue::String(l), MistValue::String(r)) => {
+                                    Ok(MistValue::String(format!("{}{}", l, r)))
+                                },
+                                (MistValue::String(l), MistValue::Number(r)) => {
+                                    Ok(MistValue::String(format!("{}{}", l, r)))
+                                },
+                                (MistValue::Number(l), MistValue::String(r)) => {
+                                    Ok(MistValue::String(format!("{}{}", l, r)))
+                                },
+                                _ => Err(format!("[Line {}] Runtime Error: Operands must be two numbers or strings.", operator.line))
+                            }
                         }
-                    }
                     TokenKind::Minus => {
                         if let (MistValue::Number(l), MistValue::Number(r)) = (&left_val, &right_val) {
                             Ok(MistValue::Number(l - r))
