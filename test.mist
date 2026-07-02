@@ -1,8 +1,3 @@
 var counter = 1;
-
-loop (counter <= 3) {
-    var message = "loop step: ";
-    print message;
-    print counter;
-    counter = counter + 1;
-}
+print counter;
+// stupid comment

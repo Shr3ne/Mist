@@ -155,7 +155,14 @@ impl Lexer {
             '-' => self.tokenize(TokenKind::Minus),
             '+' => self.tokenize(TokenKind::Plus),
             '*' => self.tokenize(TokenKind::Star),
-            '/' => self.tokenize(TokenKind::Slash),
+            '/' => {
+                if self.peek() == '/' {
+                while self.peek() != '\n' && !self.is_at_end() {
+                    self.step();
+                } } else {
+                    self.tokenize(TokenKind::Slash);
+                }
+            },
             '%' => self.tokenize(TokenKind::Percent),
             '!' => {let token = if self.peek() == '=' {self.step(); TokenKind::BangEqual} else {TokenKind::Bang};
                     self.tokenize(token);
